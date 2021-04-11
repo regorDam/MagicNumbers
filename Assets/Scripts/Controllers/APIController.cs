@@ -8,33 +8,23 @@ using UnityEngine.UI;
 public class APIController : MonoBehaviour
 {
     [SerializeField]
-    string MAIN_URL = "http://worldtimeapi.org/api/ip";
+    string MAIN_URL = "https://games.kintoncloud.com/numbers";
 
-    APITime apiTime;
-    Text clock;
-
-    float timer;
-    float waitTime = 1f;
+    NumbersCollection numbersCollection;
 
     private void Awake()
-    {
-        clock = GetComponent<Text>();
-        apiTime = new APITime();
-    }
-
-    private void Start()
     {
         StartCoroutine(GetRequest(MAIN_URL));
     }
 
+    private void Start()
+    {
+
+    }
+
     private void Update()
     {
-        timer += Time.deltaTime;
-        if (timer > waitTime)
-        {
-            StartCoroutine(GetRequest(MAIN_URL));
-            timer = 0;
-        }
+
     }
 
     IEnumerator GetRequest(string uri)
@@ -50,15 +40,19 @@ public class APIController : MonoBehaviour
             if (webRequest.isNetworkError)
             {
                 Console.Log(pages[page] + ": Error: " + webRequest.error);
-                clock.text = webRequest.error;
             }
             else
             {
-                //Console.Log(pages[page] + ":\nReceived: " + webRequest.downloadHandler.text);
-                JsonUtility.FromJsonOverwrite(webRequest.downloadHandler.text, apiTime);
-                System.DateTime dateTime = System.DateTime.Parse(apiTime.datetime);
-                clock.text = dateTime.ToString("yyyy-MM-dd hh:mm:ss");
+                Console.Log(pages[page] + ":\nReceived: " + webRequest.downloadHandler.text);
+                numbersCollection = JsonUtility.FromJson<NumbersCollection>(webRequest.downloadHandler.text);
+                Console.Log("Length numbers received: "+ numbersCollection.numbers.Length);
             }
         }
+    }
+
+    public APINumbers GetRandomNumber()
+    {
+        int l = numbersCollection.numbers.Length;
+        return numbersCollection.numbers[Random.Range(0, l)];
     }
 }
