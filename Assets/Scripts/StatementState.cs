@@ -1,20 +1,27 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class StatementState : AState
 {
     float currentTimeStatement;
     bool isFading = false;
 
+    Text label;
+
     public StatementState():base("Statement")
     {
         go.SetActive(false);
-        currentTimeStatement = gameManager.GetTimeStatement + 2;
+        label = go.GetComponent<Text>();
+        currentTimeStatement = gameManager.GetTimeStatement + 2;        
     }
 
     public override void Enter()
     {
+        string text = gameManager.GetRandomLabel();
+        label.text = text.Substring(0, 1).ToUpper() + text.Substring(1);
+
         base.Enter();
         isFading = false;
     }
