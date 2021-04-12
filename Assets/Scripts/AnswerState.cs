@@ -49,8 +49,14 @@ public class AnswerState : AState
     public override void Enter()
     {
         Init();
+
         numbersCollection = gameManager.GetNumbersCollection();
-        
+        numbersList.Clear();
+        foreach (APINumbers number in numbersCollection.numbers)
+        {
+            numbersList.AddFirst(number);
+        }
+        numbersList.Remove(gameManager.GetCurrentNumber());
         int correct = Random.Range(0, values.Length);
         int count = 0;
         Console.Log(" Result : " +correct);
@@ -146,20 +152,12 @@ public class AnswerState : AState
 
     public APINumbers GetRandomNumber()
     {        
-        foreach (APINumbers number in numbersCollection.numbers)
-        {
-            numbersList.AddFirst(number);
-        }
-
-        numbersList.Remove(gameManager.GetCurrentNumber());
-
         int l = numbersList.Count();
         int rand = Random.Range(0, l);
 
         APINumbers n = numbersList.ElementAt<APINumbers>(rand);
 
         numbersList.Remove(n);
-
         return n;
     }
 }
