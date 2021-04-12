@@ -4,6 +4,9 @@
 
 <img align="right" width="300" src="https://user-images.githubusercontent.com/9436924/114465721-c92f4100-9be7-11eb-80f8-c6e66c36a5b7.gif">
 
+Descargar APK:
+https://cutt.ly/UvwqRcU
+
 
 ## Documentación
 Este documento pretende explicar un poco los pasos seguidos en el desarrollo del proyecto y explicar el porqué de algunas decisiones tomadas.
