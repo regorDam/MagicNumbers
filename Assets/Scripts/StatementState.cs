@@ -11,8 +11,7 @@ public class StatementState : AState
     Text label;
 
     public StatementState():base("Statement")
-    {
-        go.SetActive(false);
+    {        
         label = go.GetComponent<Text>();
         currentTimeStatement = gameManager.GetTimeStatement + 2;        
     }

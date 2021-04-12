@@ -10,7 +10,7 @@ public class APIController : MonoBehaviour
     [SerializeField]
     string MAIN_URL = "https://games.kintoncloud.com/numbers";
 
-    NumbersCollection numbersCollection;
+    public NumbersCollection NumbersCol { get; private set; }
 
     private void Awake()
     {
@@ -44,15 +44,15 @@ public class APIController : MonoBehaviour
             else
             {
                 Console.Log(pages[page] + ":\nReceived: " + webRequest.downloadHandler.text);
-                numbersCollection = JsonUtility.FromJson<NumbersCollection>(webRequest.downloadHandler.text);
-                Console.Log("Length numbers received: "+ numbersCollection.numbers.Length);
+                NumbersCol = JsonUtility.FromJson<NumbersCollection>(webRequest.downloadHandler.text);
+                Console.Log("Length numbers received: "+ NumbersCol.numbers.Length);
             }
         }
     }
 
     public APINumbers GetRandomNumber()
     {
-        int l = numbersCollection.numbers.Length;
-        return numbersCollection.numbers[Random.Range(0, l)];
+        int l = NumbersCol.numbers.Length;
+        return NumbersCol.numbers[Random.Range(0, l)];
     }
 }

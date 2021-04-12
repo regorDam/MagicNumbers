@@ -30,6 +30,8 @@ public class GameManager : MonoBehaviour
 
     int intSuccesCount;
     int intFaultCount;
+    
+    public bool NextStatement { get; private set; }
 
 void Awake()
     {
@@ -71,7 +73,7 @@ void Awake()
 
     public void HandleOnStateChange()
     {
-
+        NextStatement = false;
     }
 
     public GameObject FindInScene(string TAG)
@@ -97,15 +99,14 @@ void Awake()
         return currentNumber.value;
     }
 
-    public int GetRandomValue()
+    public APINumbers GetCurrentNumber()
     {
-        int value = -1;
-        do
-        {
-            value = apiController.GetRandomNumber().value;
-        } while (value == currentNumber.value);
-        
-        return value;
+        return currentNumber;
+    }
+
+    public NumbersCollection GetNumbersCollection()
+    {
+        return apiController.NumbersCol;
     }
 
     IEnumerator WaitAPI()
@@ -122,11 +123,10 @@ void Awake()
         
         if(value == GetValue()+"")
         {
-            var colors = btn.colors;
-            colors.selectedColor = Color.green;
             text.color = Color.green;
             intSuccesCount++;
             successCount.text = intSuccesCount+"";
+            NextStatement = true;
         }
         else
         {
@@ -136,6 +136,11 @@ void Awake()
         }
 
         Console.Log("Your answer is: "+value);
+    }
+
+    public void ExecuteCoroutine(IEnumerator routine)
+    {
+        StartCoroutine(routine);
     }
 
 }
