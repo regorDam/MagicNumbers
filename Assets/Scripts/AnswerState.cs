@@ -14,6 +14,9 @@ public class AnswerState : AState
 
     float currentTimeStatement;
     bool isFading = false;
+    int correctIndex;
+
+    bool forceChangeState = false;
 
     public AnswerState() : base("Slots")
     {
@@ -43,6 +46,7 @@ public class AnswerState : AState
             value.color = newColor;
         }
         isFading = false;
+        forceChangeState = false;
         currentTimeStatement = gameManager.GetTimeStatement;
     }
 
@@ -57,12 +61,12 @@ public class AnswerState : AState
             numbersList.AddFirst(number);
         }
         numbersList.Remove(gameManager.GetCurrentNumber());
-        int correct = Random.Range(0, values.Length);
+        correctIndex = Random.Range(0, values.Length);
         int count = 0;
-        Console.Log(" Result : " +correct);
+        Console.Log(" Result : " +correctIndex);
         foreach (Text value in values)
         {
-            value.text = count == correct ? gameManager.GetValue() + "" : GetRandomNumber().value + "";
+            value.text = count == correctIndex ? gameManager.GetValue() + "" : GetRandomNumber().value + "";
             count++;
         }
 
@@ -79,21 +83,41 @@ public class AnswerState : AState
     public override void Update(float deltaTime)
     {
         base.Update(deltaTime);
-        if (gameManager.GetStateManager().state == State.ANSWER && gameManager.NextStatement)
+        if (gameManager.GetStateManager().state == State.ANSWER && gameManager.NextStatement || forceChangeState)
         {
             currentTimeStatement -= Time.deltaTime;
 
             if (currentTimeStatement < 0)
             {
+                Console.Log("change");                
+                StateManager.Instance.ChangeTo(State.STATEMENT);
                 currentTimeStatement = gameManager.GetTimeStatement;
-                StateManager.Instance.ChangeTo(State.STATEMENT); 
-                
+
             }
             else if (!isFading)
             {
+                Console.Log("fadeout");
+                values[correctIndex].color = Color.green;
                 gameManager.ExecuteCoroutine(FadeOut());
                 isFading = true;
             }
+        }
+
+        if (gameManager.ErrorGO && gameManager.CountCurrentErrors == 1)
+        {
+            gameManager.ErrorGO.GetComponentInChildren<Text>().color = Color.red;
+            gameManager.ExecuteCoroutine(FadeOut(gameManager.ErrorGO));
+            gameManager.ResetErrorGO();
+            
+        }
+        else if (gameManager.ErrorGO && gameManager.CountCurrentErrors == 2)
+        {
+            //gameManager.ExecuteCoroutine(FadeOut(gameManager.ErrorGO));
+
+            //gameManager.ExecuteCoroutine(FadeOut(values[correctIndex].transform.parent.gameObject));
+            gameManager.ErrorGO.GetComponentInChildren<Text>().color = Color.red;
+            gameManager.ResetErrorGO();
+            forceChangeState = true;
         }
     }
 
@@ -145,9 +169,36 @@ public class AnswerState : AState
                 Color newColor = new Color(clr.r, clr.g, clr.b, clr.a - (Time.deltaTime / duration));
                 value.color = newColor;
             }
-
+            
             yield return null;
         }
+        yield return new WaitForSeconds(duration);
+        isFading = false;
+    }
+
+    IEnumerator FadeOut(GameObject gameObject)
+    {
+        float duration = gameManager.GetTimeStatement;
+        float startTime = Time.time;
+
+        Image image = gameObject.GetComponentInChildren<Image>();
+        Text value = gameObject.GetComponentInChildren<Text>();
+
+        while (Time.time < startTime + duration)
+        {
+
+            Color clr = image.color;
+            Color newColor = new Color(clr.r, clr.g, clr.b, clr.a - (Time.deltaTime / duration));
+            image.color = newColor;
+            image.gameObject.GetComponent<Button>().interactable = false;
+
+            clr = value.color;
+            newColor = new Color(clr.r, clr.g, clr.b, clr.a - (Time.deltaTime / duration));
+            value.color = newColor;
+            
+            yield return null;
+        }
+
     }
 
     public APINumbers GetRandomNumber()

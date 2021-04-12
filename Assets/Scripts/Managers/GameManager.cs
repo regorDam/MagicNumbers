@@ -33,6 +33,9 @@ public class GameManager : MonoBehaviour
     
     public bool NextStatement { get; private set; }
 
+    public int CountCurrentErrors { get; private set; }
+    public GameObject ErrorGO { get; private set; }
+
 void Awake()
     {
         if (Instance == null)
@@ -74,6 +77,8 @@ void Awake()
     public void HandleOnStateChange()
     {
         NextStatement = false;
+        CountCurrentErrors = 0;
+        ErrorGO = null;
     }
 
     public GameObject FindInScene(string TAG)
@@ -123,19 +128,18 @@ void Awake()
         
         if(value == GetValue()+"")
         {
-            text.color = Color.green;
             intSuccesCount++;
             successCount.text = intSuccesCount+"";
             NextStatement = true;
         }
         else
         {
-            text.color = Color.red;
             intFaultCount++;
             faultCount.text = intFaultCount + "";
-        }
 
-        Console.Log("Your answer is: "+value);
+            CountCurrentErrors++;
+            ErrorGO = btn.gameObject;
+        }        
     }
 
     public void ExecuteCoroutine(IEnumerator routine)
@@ -143,4 +147,8 @@ void Awake()
         StartCoroutine(routine);
     }
 
+    public void ResetErrorGO()
+    {
+        ErrorGO = null;
+    }
 }
