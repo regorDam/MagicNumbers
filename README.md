@@ -2,12 +2,15 @@
 
 [![KC](https://games.kintoncloud.com/assets/img/PoweredBy.png)](https://kintoncloud.com)
 
+<img align="right" width="300" src="https://user-images.githubusercontent.com/9436924/114465721-c92f4100-9be7-11eb-80f8-c6e66c36a5b7.gif">
+
+
 ## Documentación
 Este documento pretende explicar un poco los pasos seguidos en el desarrollo del proyecto y explicar el porqué de algunas decisiones tomadas.
 Para empezar se han creado algunos scripts con algunas utilidades generales. 
-- Se ha creado una clase Console para agilizar la activación y desactivación de los Logs en consola. Ya que es altamente recomendado no pintar mensajes por consola al realizar un compilado definitivo o release.
-- Un Script MonoBehevior básico con una única función (podría estar integrado en otro script, pero es tan simple que no pone ningún problema...) cuya finalidad es limitar los FPS del juego. Ya que no existe ninguna necesidad de exprimir al hardware al máximo y teniendo en cuenta que los dispositivos móviles se calientan mucho.
-- También encontramos un script FakeProgressbar, totalmente prescindible, pero para que la aplicación no sea tan "sosa" se ha creado una escena de splash con la simulación de una barra de carga.
+- Se ha creado una clase *Console* para agilizar la activación y desactivación de los Logs en consola. Ya que es altamente recomendado no pintar mensajes por consola al realizar un compilado definitivo o release.
+- Un Script MonoBehevior básico (**Init.cs**) con una única función (podría estar integrado en otro script, pero es tan simple que no pone ningún problema...) cuya finalidad es limitar los FPS del juego. Ya que no existe ninguna necesidad de exprimir al hardware al máximo y teniendo en cuenta que los dispositivos móviles se calientan mucho.
+- También encontramos un script *FakeProgressbar*, totalmente prescindible, pero para que la aplicación no sea tan "sosa" se ha creado una escena de splash con la simulación de una barra de carga.
 
 Por otro lado, una parte importante es el script APINumbers que contiene dos clases. 
 ```sh
@@ -32,11 +35,11 @@ Resultado de la petición a la URL:
 {"numbers":[{"label":"cero","value":0},{"label":"uno","value":1},{"label":"dos","value":2},{"label":"tres","value":3},{"label":"cuatro","value":4},{"label":"cinco","value":5},{"label":"sies","value":6},{"label":"siete","value":7},{"label":"ocho","value":8},{"label":"nueve","value":9},{"label":"diez","value":10}]}
 ```
 
-Para poder trabajar con las clases anteriores se ha creado un controlador "APIController" para permitir lanzar las peticiones GET y su posterior manipulación en una colección del tipo array como puede verse en la clase NumbersCollection. Para la obtención de elementos aleatorios en realidad se ha usado una Linked list. Detallaremos la información y su uso más adelante.
+Para poder trabajar con las clases anteriores se ha creado un controlador **APIController** para permitir lanzar las peticiones GET y su posterior manipulación en una colección del tipo array como puede verse en la clase *NumbersCollection*. Para la obtención de elementos aleatorios en realidad se ha usado una Linked list. Detallaremos la información y su uso más adelante.
 
-A continuación también existen algunos Managers (LevelManager, GameManager, StateManager). Estas clases usan el patrón de diseño Singleton básicamente por una cosa muy sencilla. Son clases/objetos de los que no existe ninguna necesidad de tener varias instancias, es más NO queremos que existan varias instancias de ellas y queremos que siempre estén disponibles cuando las necesitemos. GameManager es el principal y el cual se nutre un poco de los otros.
-- LevelManager, es el más simple y tiene como finalidad ayudar a cargar entre la escena de splash a la escena de juego. Es cierto que en este caso con pocas escenas o incluso podríamos solo tener una. Pero es altamente recomendable, ya que si existe la opción de crecimiento al final esta clase puede llegar a ser muy útil.
-- StateManager, esta clase implica la creación de otros scripts (ISTate, AState, StatemenentState y AnswerState). Básicamente se ha decidido dividir la mecánica del juego en una máquina de estados. Estas divisiones están realizadas en dos fases, la fase de enunciado y la fase de respuesta. Permitiendo mantener las dos fases separadas nos aseguramos una correcta interacción entre los botones, haciendo que podamos "despreocuparnos" de cuando serán clicables, si ahora podemos o si ahora no. El loop del juego se basa en pasar de forma infinita de una fase a otra. Para ello se ha creado una interficie IState donde definimos el ciclo de vida de nuestros estados. En este caso no se usan todos ellos, pero es una estructura básica que permitirá añadir nuevos estados con nuevas funcionalidades o finalidades.
+A continuación también existen algunos Managers (**LevelManager, GameManager, StateManager**). Estas clases usan el patrón de diseño Singleton básicamente por una cosa muy sencilla. Son clases/objetos de los que no existe ninguna necesidad de tener varias instancias, es más **NO** queremos que existan varias instancias de ellas y queremos que siempre estén disponibles cuando las necesitemos. **GameManager** es el principal y el cual se nutre un poco de los otros. 
+- **LevelManager**, es el más simple y tiene como finalidad ayudar a cargar entre la escena de splash a la escena de juego. Es cierto que en este caso con pocas escenas o incluso podríamos solo tener una. Pero es altamente recomendable, ya que si existe la opción de crecimiento al final esta clase puede llegar a ser muy útil.
+- **StateManager**, esta clase implica la creación de otros scripts (**ISTate, AState, StatemenentState y AnswerState**). Básicamente se ha decidido dividir la mecánica del juego en una máquina de estados. Estas divisiones están realizadas en dos fases, la fase de enunciado y la fase de respuesta. Permitiendo mantener las dos fases separadas nos aseguramos una correcta interacción entre los botones, haciendo que podamos "despreocuparnos" de cuando serán clicables, si ahora podemos o si ahora no. El loop del juego se basa en pasar de forma infinita de una fase a otra. Para ello se ha creado una interficie IState donde definimos el ciclo de vida de nuestros estados. En este caso no se usan todos ellos, pero es una estructura básica que permitirá añadir nuevos estados con nuevas funcionalidades o finalidades.
 ```sh
 public interface IState 
 {
@@ -52,7 +55,7 @@ public interface IState
     IState GetParent();
 }
 ```
-- Luego tenemos una clase abstracta (AState), ya que no queremos permitir la creación de instancias directamente de ella. En este caso es muy simple, ya que los requisitos no pedían mucha complicación, es una clase que implementa la interficie anterior con un constructor y algún método genérico que usaremos todos los estados.
+- Luego tenemos una clase abstracta (**AState**), ya que no queremos permitir la creación de instancias directamente de ella. En este caso es muy simple, ya que los requisitos no pedían mucha complicación, es una clase que implementa la interficie anterior con un constructor y algún método genérico que usaremos todos los estados.
 ```sh
 public class AState : IState
 {
@@ -80,9 +83,9 @@ public class AState : IState
     ...
 }
 ```
-- Y para terminar con la máquina de estados tenemos la implementación de los dos estados (StatementState y AnswerState) las dos clases que contienen la lógica para cada uno de ellos.
+- Y para terminar con la máquina de estados tenemos la implementación de los dos estados (**StatementState y AnswerState**) las dos clases que contienen la lógica para cada uno de ellos.
 
-- Gamenager, al tener la máquina de estados este script no es muy complejo, cabe destacar como parte importante la inicialización y preparación de los estados
+- **Gamenager**, al tener la máquina de estados este script no es muy complejo, cabe destacar como parte importante la inicialización y preparación de los estados
 
     
 
@@ -96,6 +99,6 @@ stateManager.RegisterState(State.ANSWER, new AnswerState());
 stateManager.OnStateChange += HandleOnStateChange;
 
 ```
-Y el método HandleOnStateChange() que utilizaremos para reiniciar aquellas variables que debemos reiniciar al pasar de un estado al otro
+Y el método **HandleOnStateChange()** que utilizaremos para reiniciar aquellas variables que debemos reiniciar al pasar de un estado al otro
 
 
