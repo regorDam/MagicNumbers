@@ -82,12 +82,20 @@ public class AState : IState
 ```
 - Y para terminar con la máquina de estados tenemos la implementación de los dos estados (StatementState y AnswerState) las dos clases que contienen la lógica para cada uno de ellos.
 
-- Gamenager
+- Gamenager, al tener la máquina de estados este script no es muy complejo, cabe destacar como parte importante la inicialización y preparación de los estados
 
     
 
 ```sh
-TODO
+	
+stateManager = StateManager.Instance;
+
+stateManager.RegisterState(State.STATEMENT,new StatementState());
+stateManager.RegisterState(State.ANSWER, new AnswerState());
+        
+stateManager.OnStateChange += HandleOnStateChange;
+
 ```
+Y el método HandleOnStateChange() que utilizaremos para reiniciar aquellas variables que debemos reiniciar al pasar de un estado al otro
 
 
