@@ -4,11 +4,14 @@
 
 <img align="right" width="300" src="https://user-images.githubusercontent.com/9436924/114465721-c92f4100-9be7-11eb-80f8-c6e66c36a5b7.gif">
 
-Descargar APK:
-https://cutt.ly/UvwqRcU
+Descargar APK:https://cutt.ly/evrFAUl
 
+
+
+**Nota:** La aplicación requiere internet.
 
 ## Documentación
+
 Este documento pretende explicar un poco los pasos seguidos en el desarrollo del proyecto y explicar el porqué de algunas decisiones tomadas.
 Para empezar se han creado algunos scripts con algunas utilidades generales. 
 - Se ha creado una clase *Console* para agilizar la activación y desactivación de los Logs en consola. Ya que es altamente recomendado no pintar mensajes por consola al realizar un compilado definitivo o release.
@@ -87,6 +90,42 @@ public class AState : IState
 }
 ```
 - Y para terminar con la máquina de estados tenemos la implementación de los dos estados (**StatementState y AnswerState**) las dos clases que contienen la lógica para cada uno de ellos.
+El estado StatementState es bastante simple, en cambio el AnswerState es más interesante. Cabe destacar la forma de como pinta las opciones para las respuestas. Para ello se una linked-list porque su rendimiento a la hora de añadir y quitar elementos es muy óptima.
+A continuación se muestran algunos fragmentos para llevar a cabo esa tarea.
+```sh
+...
+...
+...
+numbersList = new LinkedList<APINumbers>();
+...
+...
+...
+numbersCollection = gameManager.GetNumbersCollection();
+numbersList.Clear();
+foreach (APINumbers number in numbersCollection.numbers)
+{
+     numbersList.AddFirst(number);
+}
+numbersList.Remove(gameManager.GetCurrentNumber());
+...
+...
+...
+public APINumbers GetRandomNumber()
+{        
+    int l = numbersList.Count();
+    int rand = Random.Range(0, l);
+
+    APINumbers n = numbersList.ElementAt<APINumbers>(rand);
+
+    numbersList.Remove(n);
+    return n;
+}
+...
+...
+...
+```
+
+
 
 - **Gamenager**, al tener la máquina de estados este script no es muy complejo, cabe destacar como parte importante la inicialización y preparación de los estados
 
@@ -102,6 +141,17 @@ stateManager.RegisterState(State.ANSWER, new AnswerState());
 stateManager.OnStateChange += HandleOnStateChange;
 
 ```
-Y el método **HandleOnStateChange()** que utilizaremos para reiniciar aquellas variables que debemos reiniciar al pasar de un estado al otro
+Y el método **HandleOnStateChange()** que utilizaremos para reiniciar aquellas variables que debemos reiniciar al pasar de un estado al otro.
+
+## Posibles actualizaciones
+
+- Una actualización interesante podría ser la forma de conectarse a la API, por ejemplo usando LocalStorage para guardar el json y actualizarlo cuando sea posible la conexión internet. De esta forma podríamos usar la aplicación sin necesidad de internet.
+
+- Otra actualización interesante seria añadir el multiidioma, creando nuevas url's en la API para obtener los datos para los diferentes idiomas, en cuanto a codigo C# sería muy fácil añadiendo unas pequeñas flags por ejemplo en GameManager o creando un nuevo script LanguageManager o de ajustes.
+
+- La opción de añadir más números no la contemplamos, ya que la aplicación ya soporta N elementos, simplemente tendríamos que modificar la API para que retorne más elementos.
+
+- Existen mucha/infinitas opciones de mejora o añadir nuevas funcionalidades, pero a priori con los requerimientos actuales estas parecen las más importantes/evidentes.
 
 
+Code & Love!

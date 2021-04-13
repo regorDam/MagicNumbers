@@ -36,6 +36,7 @@ public class GameManager : MonoBehaviour
     public int CountCurrentErrors { get; private set; }
     public GameObject ErrorGO { get; private set; }
 
+    private GameObject statementAux;
 void Awake()
     {
         if (Instance == null)
@@ -56,6 +57,7 @@ void Awake()
     void Init()
     {
         IsDebug = isDebug;
+        statementAux = FindInScene("Statement");
 
         apiController = GetComponent<APIController>();
 
@@ -123,7 +125,13 @@ void Awake()
     {
         yield return new WaitForSeconds(1f);
 
-        stateManager.ChangeTo(State.STATEMENT);
+        if(apiController.NumbersCol != null)
+            stateManager.ChangeTo(State.STATEMENT);
+        else
+        {
+            statementAux.GetComponent<Text>().text = "Revise su conexión a internet y reinicie la APP";
+            statementAux.SetActive(true);
+        }
     }
 
     public void OnClickCheckAnswer(Button btn)
