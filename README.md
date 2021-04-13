@@ -4,8 +4,8 @@
 
 <img align="right" width="300" src="https://user-images.githubusercontent.com/9436924/114465721-c92f4100-9be7-11eb-80f8-c6e66c36a5b7.gif">
 
-Descargar APK:
-https://cutt.ly/UvwqRcU
+Descargar APK:https://cutt.ly/evrFAUl
+
 
 
 ## Documentación
@@ -87,6 +87,42 @@ public class AState : IState
 }
 ```
 - Y para terminar con la máquina de estados tenemos la implementación de los dos estados (**StatementState y AnswerState**) las dos clases que contienen la lógica para cada uno de ellos.
+El estado StatementState es bastante simple, en cambio el AnswerState es más interesante. Cabe destacar la forma de como pinta las opciones para las respuestas. Para ello se una linked-list porque su rendimiento a la hora de añadir y quitar elementos es muy óptima.
+A continuación se muestran algunos fragmentos para llevar a cabo esa tarea.
+```sh
+...
+...
+...
+numbersList = new LinkedList<APINumbers>();
+...
+...
+...
+numbersCollection = gameManager.GetNumbersCollection();
+numbersList.Clear();
+foreach (APINumbers number in numbersCollection.numbers)
+{
+     numbersList.AddFirst(number);
+}
+numbersList.Remove(gameManager.GetCurrentNumber());
+...
+...
+...
+public APINumbers GetRandomNumber()
+{        
+    int l = numbersList.Count();
+    int rand = Random.Range(0, l);
+
+    APINumbers n = numbersList.ElementAt<APINumbers>(rand);
+
+    numbersList.Remove(n);
+    return n;
+}
+...
+...
+...
+```
+
+
 
 - **Gamenager**, al tener la máquina de estados este script no es muy complejo, cabe destacar como parte importante la inicialización y preparación de los estados
 
