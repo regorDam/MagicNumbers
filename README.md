@@ -8,7 +8,10 @@ Descargar APK:https://cutt.ly/evrFAUl
 
 
 
+**Nota:** La aplicación requiere internet.
+
 ## Documentación
+
 Este documento pretende explicar un poco los pasos seguidos en el desarrollo del proyecto y explicar el porqué de algunas decisiones tomadas.
 Para empezar se han creado algunos scripts con algunas utilidades generales. 
 - Se ha creado una clase *Console* para agilizar la activación y desactivación de los Logs en consola. Ya que es altamente recomendado no pintar mensajes por consola al realizar un compilado definitivo o release.
@@ -138,6 +141,17 @@ stateManager.RegisterState(State.ANSWER, new AnswerState());
 stateManager.OnStateChange += HandleOnStateChange;
 
 ```
-Y el método **HandleOnStateChange()** que utilizaremos para reiniciar aquellas variables que debemos reiniciar al pasar de un estado al otro
+Y el método **HandleOnStateChange()** que utilizaremos para reiniciar aquellas variables que debemos reiniciar al pasar de un estado al otro.
+
+## Posibles actualizaciones
+
+- Una actualización interesante podría ser la forma de conectarse a la API, por ejemplo usando LocalStorage para guardar el json y actualizarlo cuando sea posible la conexión internet. De esta forma podríamos usar la aplicación sin necesidad de internet.
+
+- Otra actualización interesante seria añadir el multiidioma, creando nuevas url's en la API para obtener los datos para los diferentes idiomas, en cuanto a codigo C# sería muy fácil añadiendo unas pequeñas flags por ejemplo en GameManager o creando un nuevo script LanguageManager o de ajustes.
+
+- La opción de añadir más números no la contemplamos, ya que la aplicación ya soporta N elementos, simplemente tendríamos que modificar la API para que retorne más elementos.
+
+- Existen mucha/infinitas opciones de mejora o añadir nuevas funcionalidades, pero a priori con los requerimientos actuales estas parecen las más importantes/evidentes.
 
 
+Code & Love!
